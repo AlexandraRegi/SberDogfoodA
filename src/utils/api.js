@@ -12,35 +12,35 @@ class Api {
         return fetch(`${this.baseUrl}/products`, {
             method: 'GET',
             headers: this.headers,
-        }).then(onResponse);
+        }).then(onResponse).catch(err => alert('ERROR',err));
     }
 
     getUserInfo() {
         return fetch(`${this.baseUrl}/users/me`, {
             method: 'GET',
             headers: this.headers,
-        }).then(onResponse);
+        }).then(onResponse).catch(err => alert('ERROR',err));
     }
 
     searchProducts(path) {
         return fetch(`${this.baseUrl}/products/search?query=${path}`, {
             method: 'GET',
             headers: this.headers,
-        }).then(onResponse);
+        }).then(onResponse).catch(err => alert('ERROR',err));
     }
     
     changeProductLike(productId, isLiked) {
         return fetch(`${this.baseUrl}/products/likes/${productId}`, {
             method: isLiked ? 'DELETE' : 'PUT',
             headers: this.headers,
-        }).then(onResponse);
+        }).then(onResponse).catch(err => alert('ERROR',err));
     }
 
     getProductById(id) {
         return fetch(`${this.baseUrl}/products/${id}`, {
             method: 'GET',
             headers: this.headers,
-        }).then(onResponse);
+        }).then(onResponse).catch(err => alert('ERROR',err));
     }
 }
 
