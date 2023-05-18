@@ -1,13 +1,8 @@
 import React from "react";
 import s from './index.module.css';
-import { Link, useNavigate } from "react-router-dom";
 import { BackNavigate } from "../BackNavigate/BackNavigate";
 
 export const Product = ({product}) => {
-    const navigate = useNavigate()
-    const goBack = () => {
-        navigate('/')
-    }
     
     return (<div className={`${s.product} container`}>
         <div className={s.titleWrapper}>

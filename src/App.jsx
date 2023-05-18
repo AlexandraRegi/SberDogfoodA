@@ -6,14 +6,17 @@ import { api } from './utils/api';
 import { useDebounce } from './hooks/hooks';
 import { CatalogPage } from './pages/CatalogPage/CatalogPage';
 import { ProductPage } from './pages/ProductPage/ProductPage';
+import { FavoritesPage } from './pages/FavoritesPage/FavoritesPage';
 import { Navigate, Route, Routes } from 'react-router';
+import { UserContext } from './context/userContext';
+import { CardsContext } from './context/cardContext';
 
 
 function App() {
   const [cards, setCards] = useState([]);
   const [search, setSearch] = useState(undefined);
   const [user, setUser] = useState({});
-  const [isAuthorized, setAuth] = useState(true);
+  const [isAuthorized, /*setAuth*/] = useState(true);
   const [favorites, setFavorites] = useState([])
 
   const debounceValueInApp = useDebounce(search);
@@ -26,11 +29,28 @@ function App() {
     if (index !== -1) {
       setCards(state => [...state.slice(0, index), updatedCard, ...state.slice(index+1)])
     }
+    isLiked ?
+    setFavorites((state) => state.filter(f=>f._id !== updatedCard._id))
+    :
+    setFavorites((state) => [updatedCard, ...state])
+  }
+
+  const productRating = (reviews) => {
+    if (!reviews || !reviews.length) {
+      return 0;
+    }
+    const res = reviews.reduce((acc, el) => acc += el.rating, 0);
+    return res / reviews.length
   }
 
   const onSort = (sortId) => {
     if (sortId === 'popular') {
       const newCards = cards.sort((a, b) => b.likes.length - a.likes.length);
+      setCards([...newCards]);
+      return
+    }
+    if (sortId === 'rate') {
+      const newCards = cards.sort((a, b) => productRating(b.reviews) - productRating(a.reviews));
       setCards([...newCards]);
       return
     }
@@ -59,29 +79,47 @@ function App() {
     api.searchProducts(search).then((data) =>setCards(data))
   }, [debounceValueInApp]);
 
+  const findLiked = (product, id) => {
+    return product.likes.some(e => e === id)
+  }
+
   useEffect(()=>{
     Promise.all([api.getUserInfo(), api.getProductList()]).then(([userData, productData]) => {
       setUser(userData);
       setCards(productData.products);
+      const fav = productData.products.filter(e => findLiked(e, userData._id))
+      setFavorites(fav);
     })
   }, [])
 
+  const cardsValue = {
+    handleLike: handleProductLike,
+    cards: cards,
+    search,
+    favorites,
+    onSort,
+  }
+
   return (
     <div className="App">
-      <Header setSearch={setSearch} favorites={favorites}/>
-      <main className=" container ">
-        {isAuthorized ?
-        <Routes>
-        <Route path='/' element={<CatalogPage onSort={onSort} search={search} cards={cards} user={user} handleProductLike = {handleProductLike}/>} />
-        <Route path='/product/:id' element={<ProductPage />} />
-        <Route path='/favorites' />
-        <Route path='*' element={<div>NOT FOUND 404</div>} />
-        </Routes>
-        :
-        <Navigate to={'/not-found'} />
-        }
-      </main>
-      <Footer />
+      <CardsContext.Provider value={cardsValue}>
+        <UserContext.Provider value={user}>
+          <Header setSearch={setSearch} />
+          <main className=" container content">
+            {isAuthorized ?
+            <Routes>
+              <Route path='/' element={<CatalogPage />} />
+              <Route path='/product/:id' element={<ProductPage />} />
+              <Route path='/favorites' element={<FavoritesPage />}/>
+              <Route path='*' element={<div>NOT FOUND 404</div>} />
+            </Routes>
+            :
+            <Navigate to={'/not-found'} />
+            }
+          </main>
+          <Footer />
+        </UserContext.Provider>
+      </CardsContext.Provider>
     </div>
   );
 }

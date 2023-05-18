@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import './index.css';
 import { ReactComponent as Logo } from '../Logo/logo.svg';
 import { Search } from '../Search/Search.jsx'
@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { ReactComponent as Basket} from './img/basket.svg';
 import { ReactComponent as Profile} from './img/profile.svg';
 import { ReactComponent as Like} from '../Card/img/like.svg';
+import { CardsContext } from '../../context/cardContext';
 
 export const Header = (props) => {
     const setSearchQuery = (path) => {
@@ -14,6 +15,7 @@ export const Header = (props) => {
     }
 
     const location = useLocation();
+    const { favorites } = useContext(CardsContext);
 
     return <header className='header'>
         <div className='container'>
@@ -23,7 +25,7 @@ export const Header = (props) => {
                 <div className='header_icons'>
                     <Link className='header__fav' to={'/favorites'}>
                         <Like className='header__like'/>
-                        <span className='header__bubble'>{props.favorites.length}</span>
+                        <span className='header__bubble'>{favorites.length}</span>
                     </Link>
                     <Basket className='header__icon'/>
                     <Profile className='header__icon'/>
