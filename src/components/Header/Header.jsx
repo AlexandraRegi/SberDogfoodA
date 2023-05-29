@@ -9,13 +9,14 @@ import { ReactComponent as Profile} from './img/profile.svg';
 import { ReactComponent as Like} from '../Card/img/like.svg';
 import { CardsContext } from '../../context/cardContext';
 
+
 export const Header = (props) => {
     const setSearchQuery = (path) => {
         props.setSearch(path);
     }
 
     const location = useLocation();
-    const { favorites } = useContext(CardsContext);
+    const { favorites, setModalActive } = useContext(CardsContext);
 
     return <header className='header'>
         <div className='container'>
@@ -24,11 +25,13 @@ export const Header = (props) => {
                 {location.pathname === '/' && <Search setSearch={setSearchQuery}/>}
                 <div className='header_icons'>
                     <Link className='header__fav' to={'/favorites'}>
-                        <Like className='header__like'/>
-                        <span className='header__bubble'>{favorites.length}</span>
+                    <Like className='header__like'/>
+                        {!!favorites.length && <span className='header__bubble'>{favorites.length}</span>}
                     </Link>
                     <Basket className='header__icon'/>
-                    <Profile className='header__icon'/>
+                    <Link to={'/login'} onClick={()=>setModalActive(true)}>
+                    <Profile  className='header__icon' />
+                    </Link>
                 </div>
             </div>
         </div>     

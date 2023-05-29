@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useContext } from 'react';
 import './App.css';
 import { Footer } from './components/Footer/Footer';
 import { Header } from './components/Header/Header';
@@ -8,32 +8,32 @@ import { CatalogPage } from './pages/CatalogPage/CatalogPage';
 import { ProductPage } from './pages/ProductPage/ProductPage';
 import { FavoritesPage } from './pages/FavoritesPage/FavoritesPage';
 import { Navigate, Route, Routes } from 'react-router';
-import { UserContext } from './context/userContext';
 import { CardsContext } from './context/cardContext';
+import { Modal } from './components/Modal/Modal';
+import { LoginForm } from "./components/Auth/Login/Login";
+import { RegisterForm } from "./components/Auth/Register/Register";
+import { ResetPass } from "./components/Auth/ResetPass/ResetPass";
 
 
 function App() {
   const [cards, setCards] = useState([]);
   const [search, setSearch] = useState(undefined);
   const [user, setUser] = useState({});
-  const [isAuthorized, /*setAuth*/] = useState(true);
+  const [isAuthorized, setAuth] = useState(true);
   const [favorites, setFavorites] = useState([])
+  const [modalActive, setModalActive] = useState(false);
 
   const debounceValueInApp = useDebounce(search);
 
-  const handleProductLike = async (product, isLiked) => {
+  const handleProductLike = useCallback(async (product, isLiked) => {
     const updatedCard  = await api.changeProductLike(product._id, isLiked);
-    const newCards = cards.map(e => e._id === updatedCard._id ? updatedCard : e)
-    setCards([...newCards])
-    const index = cards.findIndex(e=>e._id === updatedCard._id);
-    if (index !== -1) {
-      setCards(state => [...state.slice(0, index), updatedCard, ...state.slice(index+1)])
-    }
+    setCards(s => [...s.map(e => e._id === updatedCard?._id ? updatedCard : e)]);
     isLiked ?
     setFavorites((state) => state.filter(f=>f._id !== updatedCard._id))
     :
     setFavorites((state) => [updatedCard, ...state])
-  }
+    return isLiked;
+  }, [])
 
   const productRating = (reviews) => {
     if (!reviews || !reviews.length) {
@@ -62,10 +62,12 @@ function App() {
     if (sortId === 'cheapest') {
       const newCards = cards.sort((a,b) => a.price - b.price)
       setCards([...newCards]);
+      return
     }
     if (sortId === 'most-expensive') {
       const newCards = cards.sort((a,b) => b.price - a.price)
       setCards([...newCards]);
+      return
     }
     if (sortId === 'sale') {
       const newCards = cards.sort((a, b) => b.discount - a.discount);
@@ -76,7 +78,7 @@ function App() {
   
   useEffect(()=>{
     if (debounceValueInApp === undefined) return;
-    api.searchProducts(search).then((data) =>setCards(data))
+    api.searchProducts(debounceValueInApp).then((data) =>setCards(data))
   }, [debounceValueInApp]);
 
   const findLiked = (product, id) => {
@@ -98,19 +100,45 @@ function App() {
     search,
     favorites,
     onSort,
+    setModalActive,
+    user
   }
+
+  const authRoutes = <>
+    <Route path="/register" element={
+      <Modal modalActive={modalActive} setModalActive={setModalActive} >
+        <RegisterForm />
+      </Modal>
+    } />
+    <Route path="/login" element={
+      <Modal modalActive={modalActive} setModalActive={setModalActive} >
+        <LoginForm />
+      </Modal>
+    } />
+      <Route path="/reset-pass" element={
+      <Modal modalActive={modalActive} setModalActive={setModalActive} >
+        <ResetPass />
+      </Modal>
+    } />
+  </>
+
+useEffect(()=>{
+  if (localStorage.getItem('token')) {
+    setAuth(true);
+  }
+},[]);
 
   return (
     <div className="App">
       <CardsContext.Provider value={cardsValue}>
-        <UserContext.Provider value={user}>
           <Header setSearch={setSearch} />
-          <main className=" container content">
+          <main className="container content">
             {isAuthorized ?
             <Routes>
               <Route path='/' element={<CatalogPage />} />
               <Route path='/product/:id' element={<ProductPage />} />
               <Route path='/favorites' element={<FavoritesPage />}/>
+              {authRoutes}
               <Route path='*' element={<div>NOT FOUND 404</div>} />
             </Routes>
             :
@@ -118,7 +146,6 @@ function App() {
             }
           </main>
           <Footer />
-        </UserContext.Provider>
       </CardsContext.Provider>
     </div>
   );

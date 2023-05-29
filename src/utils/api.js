@@ -42,6 +42,53 @@ class Api {
             headers: this.headers,
         }).then(onResponse).catch(err => alert('ERROR',err));
     }
+
+    addProductReview(productId, data) {
+        return fetch(`${this.baseUrl}/products/review/${productId}`, {
+          headers: this.headers,
+          method: "POST",
+          body: JSON.stringify(data)
+        }).then(onResponse).catch(err => alert('ERROR',err));
+    }
+
+    deleteProductReview(productId, reviewId) {
+        return fetch(`${this.baseUrl}/products/review/${productId}/${reviewId}`, {
+          headers: this.headers,
+          method: "DELETE",
+        }).then(onResponse).catch(err => alert('ERROR',err));
+    }
+
+    signin(data) {
+        return fetch(`${this.baseUrl}/signin`, {
+          headers: this.headers,
+          method: "POST",
+          body: JSON.stringify(data)
+        }).then(onResponse).catch(err => alert('ERROR',err));
+    }
+    
+    signup(data) {
+        return fetch(`${this.baseUrl}/signup`, {
+          headers: this.headers,
+          method: "POST",
+          body: JSON.stringify(data)
+        }).then(onResponse).catch(err => alert('ERROR',err));
+    }
+
+    resetPass(data) {
+        return fetch(`${this.baseUrl}/forgot-password`, {
+          headers: this.headers,
+          method: "POST",
+          body: JSON.stringify(data)
+        }).then(onResponse).catch(err => alert('ERROR',err));
+    }
+
+    resetPassWithToken(token, data) {
+        return fetch(`${this.baseUrl}/password-reset/${token}`, {
+          headers: this.headers,
+          method: "PATCH",
+          body: JSON.stringify(data)
+        }).then(onResponse).catch(err => alert('ERROR',err));
+    }
 }
 
 const config = {

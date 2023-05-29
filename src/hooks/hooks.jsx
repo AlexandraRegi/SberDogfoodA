@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 
+
 export const useDebounce = (path) => {
     const [debounceValue, setDebounceValue] = useState(path);
   
@@ -10,6 +11,5 @@ export const useDebounce = (path) => {
       return () => clearTimeout(timeout)
       
     }, [path])
-  
     return debounceValue
   }

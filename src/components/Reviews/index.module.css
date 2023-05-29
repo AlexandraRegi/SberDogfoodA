@@ -1,0 +1,77 @@
+.reviews {
+  margin-top: 20px;
+}
+
+.reviews__author {
+  align-items: center;
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 24px;
+  color: #1a1a1a;
+}
+
+.reviews__date {
+  padding: 0 0 0 10px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  color: #7b8e98;
+}
+
+.reviews__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.reviews__hr {
+  height: 1px;
+  background: #eceff1;
+}
+
+.reviews__item {
+  padding: 20px 0;
+}
+
+.reviews__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem 0;
+  width: 50%;
+}
+
+.reviews__basket {
+  cursor: pointer;
+  margin-left: 1rem;
+  stroke: grey;
+}
+
+.reviews__controls {
+  display: flex;
+  gap: 2rem;
+  flex-direction: column;
+  width: fit-content;
+  padding: 2rem 0;
+}
+
+.btn {
+  padding: 10px 18px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 20px;
+  border-radius: 55px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.3s;
+}
+
+.btn_type_primary {
+  background-color: #ffe44d;
+}
+
+.btn_type_primary:hover {
+  background-color: #ffaa0d;
+  color: #f44336;
+}

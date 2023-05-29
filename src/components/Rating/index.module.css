@@ -1,0 +1,12 @@
+.star {
+  stroke: lightgray;
+}
+
+.filled {
+  fill: #ffaa0d;
+  stroke: #ffaa0d;
+}
+
+.editable {
+  cursor: pointer;
+}

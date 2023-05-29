@@ -2,6 +2,7 @@ import React from 'react'
 import { Card } from '../Card/Card'
 import './index.css'
 
+
 export const CardList = ({cards}) => {
     return (
     <div className='cards'>

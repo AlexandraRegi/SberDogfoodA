@@ -1,0 +1,12 @@
+.footer {
+  width: 100%;
+  background-color: #ffe44d;
+  padding: 12px 0;
+}
+
+.footer__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 80px;
+}
