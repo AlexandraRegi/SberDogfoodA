@@ -8,8 +8,7 @@ export const useDebounce = (path) => {
       const timeout = setTimeout(() => {
         setDebounceValue(path)
       }, 1000);
-      return () => clearTimeout(timeout)
-      
+      return () => clearTimeout(timeout) 
     }, [path])
     return debounceValue
   }

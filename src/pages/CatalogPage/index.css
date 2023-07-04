@@ -24,9 +24,5 @@
   line-height: 20px;
   color: #7b8e98;
   cursor: pointer;
-}
-
-.active {
-  color: #1a1a1a;
-  background-color: rgb(127, 255, 212);
+  border: none;
 }

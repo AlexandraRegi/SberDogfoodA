@@ -1,17 +1,19 @@
-import React, { useContext } from "react";
+import React from "react";
 import './index.css'
 import { ReactComponent as Like } from "./img/like.svg";
 import { Link } from "react-router-dom";
-import { CardsContext } from '../../context/cardContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchChangeProductLike } from '../../storage/slices/productsSlice';
 
 
 export const Card = ({product}) => {
 
-    const {handleLike, user} = useContext(CardsContext);
+    const { data: user } = useSelector((s) => s.user)
+    const dispatch = useDispatch();
     const isLiked = product.likes.some(e=> e === user._id)
 
     const handleClick = () => {
-        handleLike(product, isLiked);
+        dispatch(fetchChangeProductLike({ product: product, wasLiked: isLiked }))
     }
 
     return (

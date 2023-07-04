@@ -3,49 +3,66 @@ const onResponse = (res) => {
 }
 
 class Api {
-    constructor(data) {
+    constructor(data, freshHeaders) {
         this.baseUrl = data.baseUrl;
         this.headers = data.headers
+        this.freshHeaders = freshHeaders;
     }
 
     getProductList() {
         return fetch(`${this.baseUrl}/products`, {
             method: 'GET',
-            headers: this.headers,
+            ...this.freshHeaders(),
         }).then(onResponse).catch(err => alert('ERROR',err));
     }
 
     getUserInfo() {
         return fetch(`${this.baseUrl}/users/me`, {
             method: 'GET',
-            headers: this.headers,
+            ...this.freshHeaders(),
+        }).then(onResponse).catch(err => alert('ERROR',err));
+    }
+
+    updateUserInfo(data) {
+        return fetch(`${this.baseUrl}/users/me`, {
+            ...this.freshHeaders(),
+          method: "PATCH",
+          body: JSON.stringify(data)
+        }).then(onResponse).catch(err => alert('ERROR',err));
+    }
+
+    updateUserAvatar(data) {
+        return fetch(`${this.baseUrl}/users/me/avatar`, {
+            ...this.freshHeaders(),
+          method: "PATCH",
+          body: JSON.stringify(data)
         }).then(onResponse).catch(err => alert('ERROR',err));
     }
 
     searchProducts(path) {
         return fetch(`${this.baseUrl}/products/search?query=${path}`, {
             method: 'GET',
-            headers: this.headers,
+            ...this.freshHeaders(),
         }).then(onResponse).catch(err => alert('ERROR',err));
     }
     
     changeProductLike(productId, isLiked) {
         return fetch(`${this.baseUrl}/products/likes/${productId}`, {
             method: isLiked ? 'DELETE' : 'PUT',
-            headers: this.headers,
+            ...this.freshHeaders(),
         }).then(onResponse).catch(err => alert('ERROR',err));
     }
 
     getProductById(id) {
         return fetch(`${this.baseUrl}/products/${id}`, {
             method: 'GET',
-            headers: this.headers,
+            ...this.freshHeaders(),
         }).then(onResponse).catch(err => alert('ERROR',err));
     }
 
     addProductReview(productId, data) {
         return fetch(`${this.baseUrl}/products/review/${productId}`, {
-          headers: this.headers,
+            ...this.freshHeaders(),
           method: "POST",
           body: JSON.stringify(data)
         }).then(onResponse).catch(err => alert('ERROR',err));
@@ -53,14 +70,14 @@ class Api {
 
     deleteProductReview(productId, reviewId) {
         return fetch(`${this.baseUrl}/products/review/${productId}/${reviewId}`, {
-          headers: this.headers,
+            ...this.freshHeaders(),
           method: "DELETE",
         }).then(onResponse).catch(err => alert('ERROR',err));
     }
 
     signin(data) {
         return fetch(`${this.baseUrl}/signin`, {
-          headers: this.headers,
+            ...this.freshHeaders(),
           method: "POST",
           body: JSON.stringify(data)
         }).then(onResponse).catch(err => alert('ERROR',err));
@@ -68,7 +85,7 @@ class Api {
     
     signup(data) {
         return fetch(`${this.baseUrl}/signup`, {
-          headers: this.headers,
+            ...this.freshHeaders(),
           method: "POST",
           body: JSON.stringify(data)
         }).then(onResponse).catch(err => alert('ERROR',err));
@@ -76,7 +93,7 @@ class Api {
 
     resetPass(data) {
         return fetch(`${this.baseUrl}/forgot-password`, {
-          headers: this.headers,
+            ...this.freshHeaders(),
           method: "POST",
           body: JSON.stringify(data)
         }).then(onResponse).catch(err => alert('ERROR',err));
@@ -84,12 +101,21 @@ class Api {
 
     resetPassWithToken(token, data) {
         return fetch(`${this.baseUrl}/password-reset/${token}`, {
-          headers: this.headers,
+            ...this.freshHeaders(),
           method: "PATCH",
           body: JSON.stringify(data)
         }).then(onResponse).catch(err => alert('ERROR',err));
     }
 }
+
+const freshHeaders = () => {
+    return {
+      headers: {
+        "Content-Type": "application/json",
+        authorization: localStorage.getItem('token')
+      }
+    }
+  };
 
 const config = {
     baseUrl: 'https://api.react-learning.ru',
@@ -97,7 +123,6 @@ const config = {
         "Content-Type": "application/json",
         authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDRhNzlhZDhmYmM0NzNmYTg5ZWIyNjAiLCJncm91cCI6Imdyb3VwLTEyIiwiaWF0IjoxNjgyNjA0OTEyLCJleHAiOjE3MTQxNDA5MTJ9.5X9tNueAH1aKolFazhoNiyzDDL0EhPtpHqFYqKXddHo"
     }
+};
 
-}
-
-export const api = new Api(config);
+export const api = new Api(config, freshHeaders);

@@ -1,25 +1,28 @@
-import React, { useEffect, useState, useContext, useCallback } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 import { Product } from "../../components/Product/Product"
 import { api } from "../../utils/api"
 import { useParams } from "react-router"
-import { CardsContext } from '../../context/cardContext';
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchChangeProductLike } from '../../storage/slices/productsSlice'
+import { openNotification } from "../../components/Notification/Notification";
 
 
 export const ProductPage = () => {
     const [product, setProduct] = useState({});
     const { id } = useParams();
-    const { user, handleLike } = useContext(CardsContext);
+    const dispatch = useDispatch();
+    const user = useSelector(state => state.user.data);
 
-    const onProductLike = useCallback(async (item, isLikedProduct) => {
-        const isLiked = await handleLike(item, isLikedProduct);
-        if (isLiked) {
+    const onProductLike = useCallback(async (item, wasLiked) => {
+        dispatch(fetchChangeProductLike({ product: item, wasLiked: wasLiked }))
+        if (wasLiked) {
             const filteredLikes = item.likes.filter(e => e !== user?._id);
             setProduct((s) => ({ ...s, likes: filteredLikes }))
         } else {
             const addLikes = [...item.likes, user?._id];
             setProduct((s) => ({ ...s, likes: addLikes }))
         }
-    }, [handleLike, user?._id])
+    }, [dispatch, user?._id])
 
     useEffect(() => {
         if (id) {
@@ -28,8 +31,13 @@ export const ProductPage = () => {
     }, [id])
 
     const sendReview = useCallback(async data => {
-        const result = await api.addProductReview(product._id, data);
-        setProduct(() => ({ ...result }))
+        try {
+            const result = await api.addProductReview(product._id, data);
+            setProduct(() => ({ ...result }));
+            openNotification("success", "Успешно", "Ваш отзыв отправлен");
+          } catch (error) {
+            openNotification("error", "Ошибка", "Ваш отзыв не удалось отправить");
+          }
     }, [product._id])
 
     const onDeleteReview = useCallback(async id => {

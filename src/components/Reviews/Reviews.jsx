@@ -1,9 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Rating } from "../Rating/Rating";
 import s from './index.module.css'
 import { useForm } from "react-hook-form";
-import { CardsContext } from "../../context/cardContext";
 import { ReactComponent as Basket } from '../../assets/img/basket.svg'
+import { useSelector } from "react-redux";
 
 
 const timeOptions = {
@@ -14,8 +14,8 @@ const timeOptions = {
 export const Reviews = ({ onSendReview, reviews, onDeleteReview }) => {
     const [showForm, setShowForm] = useState();
     const [rate, setRate] = useState(3);
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({ mode: "onBlur" });
-    const { user } = useContext(CardsContext);
+    const { register, handleSubmit, reset } = useForm({ mode: "onBlur" });
+    const { data: user } = useSelector((s) => s.user)
 
     const reviewRegister = {
         required: {
@@ -39,7 +39,7 @@ export const Reviews = ({ onSendReview, reviews, onDeleteReview }) => {
             {showForm &&
                 <form className={s.reviews__form} onSubmit={handleSubmit(onSendFromReview)} >
                     <Rating rating={rate} setRate={setRate} isEditable={true} />
-                    <textarea  {...register("text", reviewRegister)} type="text" placeholder="Оставьте ваш отзыв" className="form__input" />
+                    <textarea  {...register("text", reviewRegister)} type="text" placeholder="Оставьте ваш отзыв" className={s.form__input} />
                     <button type="submit" className='btn btn_type_primary' >Send</button>
                 </form>}
             <div className={s.reviews__list}>

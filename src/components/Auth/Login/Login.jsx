@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useForm } from 'react-hook-form';
 import '../index.css'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../utils/api";
+import { openNotification } from "../../Notification/Notification";
 
 
-export const emailRegister = { required: 'Обязательное поле для заполнения' }
+export const emailRegister = { required: 'Обязательное поле для заполнения!' }
 export const passwordRegister = {
     required: {
         value: true,
-        message: 'pass is required!'
+        message: 'Обязательное поле для заполнения!'
     },
     pattern: {
         value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
@@ -20,14 +21,17 @@ export const passwordRegister = {
 export const LoginForm = () => {
 
     const [type, setType] = useState(true)
+    const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm({ mode: "onBlur" });
 
     const sendData = async (data) => {
         try {
             const res = await api.signin(data);
             localStorage.setItem('token', res.token);
+            navigate('/')
+            openNotification("success", "Успешно", "Вы вошли");
         } catch (error) {
-            alert('Oooops');
+            openNotification("error", "Ошибка", "Неправильный логин/пароль");
         }
     }
 

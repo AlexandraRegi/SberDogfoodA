@@ -1,19 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import s from './index.module.css';
 import { BackNavigate } from "../BackNavigate/BackNavigate";
 import truck from './delivery.svg';
 import { ReactComponent as Like} from '../Card/img/like.svg'
-import { CardsContext } from '../../context/cardContext';
 import cn from 'classnames';
 import { Reviews } from '../Reviews/Reviews';
 import { Rating } from '../Rating/Rating';
 import { getEndings } from '../../utils/utils'
+import { useSelector } from 'react-redux';
 
 
 export const Product = ({product, onProductLike, sendReview, onDeleteReview}) => {
 
     const [isLikedProduct, setIsProductLike] = useState(false);
-    const { user } = useContext(CardsContext);
+    const { data: user } = useSelector((s) => s.user)
 
     const getDiscountPrice = (discount, price) => {
         return (price - Math.floor(price * discount / 100)).toFixed(0);

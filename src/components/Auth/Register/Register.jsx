@@ -14,7 +14,6 @@ export const RegisterForm = () => {
     const sendData = async (data) => {
         try {
             const res = await api.signup(data);
-            console.log(res);
         } catch (error) {
             alert('Oooops');
         }

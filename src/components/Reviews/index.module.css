@@ -75,3 +75,16 @@
   background-color: #ffaa0d;
   color: #f44336;
 }
+
+.form__input {
+  border-radius: 10px;
+  background-color: #ffffff;
+  max-width: 200px;
+  caret-color: #000000;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+  padding: 6px 20px;
+  border: 1px solid lightgrey;
+  outline: none;
+}
